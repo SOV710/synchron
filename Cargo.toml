@@ -1,7 +1,22 @@
 [package]
 name = "synchron"
 version = "0.1.0"
+authors = ["SOV710 <chris916911179@outlook.com"]
+description  = "A real-time folder synchronization tool, inspired by Syncthing."
+license = "MIT"
+license-file = "LICENSE"
+repository = "https://github.com/SOV710/synchron"
+homepage = "https://github.com/SOV710/synchron"
+documentation = "https://docs.rs/synchron"
+readme = "README.md"
+keywords = ["sync", "filesync", "realtime", "files"]
+categories = ["command-line-utilities", "file-management", "system-tools", "monitoring"]
 edition = "2021"
+rust-version = "1.90.0-nightly"
+
+[[bin]]
+name = "synchron"
+path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }

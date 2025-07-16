@@ -8,7 +8,7 @@ synchron 是一个同步本地多个文件夹的工具，支持多向实时传�
 
 | Distribution            | Instructions                                                           |
 | ----------------------- | ---------------------------------------------------------------------- |
-| **GitHub Release**      | 从 [Releases](https://github.com/youruser/synchron/releases) 下载对应平台包并解压 |
+| **GitHub Release**      | 从 [Releases](https://github.com/SOV710/synchron/releases/) 下载对应平台包并解压 |
 | `.exe` (Windows)        | 下载 `synchron-windows-x86_64.exe`                                       |
 | `.dmg` (macOS)          | 下载 `synchron-macos.dmg` 并挂载安装                                          |
 | `.deb` (Debian/Ubuntu)` | `sudo dpkg -i synchron_*.deb`                                          |

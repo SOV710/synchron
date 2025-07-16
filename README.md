@@ -8,7 +8,7 @@ synchron is a tool for synchronizing multiple local folders, supporting multi-di
 
 | Distribution           | Instructions                                                                                               |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **GitHub Release**     | Download the appropriate package from [Releases](https://github.com/youruser/synchron/releases) and unpack |
+| **GitHub Release**     | Download the appropriate package from [Releases](https://github.com/SOV710/synchron/releases/) and unpack |
 | `.exe` (Windows)       | Download `synchron-windows-x86_64.exe`                                                                     |
 | `.dmg` (macOS)         | Download `synchron-macos.dmg` and mount to install                                                         |
 | `.deb` (Debian/Ubuntu) | Run `sudo dpkg -i synchron_*.deb`                                                                          |
