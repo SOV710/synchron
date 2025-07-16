@@ -39,7 +39,10 @@ impl IgnoreMatcher {
             }
         };
 
-        Self { matcher, root: dir.clone() }
+        Self {
+            matcher,
+            root: dir.clone(),
+        }
     }
 
     pub fn is_ignored(&self, path: &Path) -> bool {

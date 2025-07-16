@@ -16,21 +16,18 @@ pub fn build_watcher(
     tx: Sender<DebouncedEvent>,
     debounce_ms: u64,
 ) -> Result<Debouncer<RecommendedWatcher>> {
-
     let mut debouncer = new_debouncer(
         Duration::from_millis(debounce_ms),
-        move |res: DebounceEventResult| {
-            match res {
-                Ok(events) => {
-                    for ev in events {
-                        if let Err(e) = tx.send(ev) {
-                            error!("发送去抖事件失败: {}", e);
-                        }
+        move |res: DebounceEventResult| match res {
+            Ok(events) => {
+                for ev in events {
+                    if let Err(e) = tx.send(ev) {
+                        error!("发送去抖事件失败: {}", e);
                     }
                 }
-                Err(e) => {
-                    error!("监视器错误: {:?}", e);
-                }
+            }
+            Err(e) => {
+                error!("监视器错误: {:?}", e);
             }
         },
     )

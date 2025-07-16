@@ -59,15 +59,13 @@ pub fn handle_event(path: &Path, opt: &Opt) -> Result<()> {
                 .with_context(|| format!("删除目录失败: {:?}", dst_path))?;
             debug!("删除目录: {:?}", dst_path);
         } else {
-            fs::remove_file(&dst_path)
-                .with_context(|| format!("删除文件失败: {:?}", dst_path))?;
+            fs::remove_file(&dst_path).with_context(|| format!("删除文件失败: {:?}", dst_path))?;
             debug!("删除文件: {:?}", dst_path);
         }
     }
 
     Ok(())
 }
-
 
 // unit testing
 #[cfg(test)]
@@ -116,4 +114,3 @@ mod tests {
         assert!(!dst.exists());
     }
 }
-

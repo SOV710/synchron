@@ -1,5 +1,7 @@
 // src/logger.rs
-use simplelog::{ColorChoice, CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, WriteLogger};
+use simplelog::{
+    ColorChoice, CombinedLogger, Config, LevelFilter, TermLogger, TerminalMode, WriteLogger,
+};
 use std::{fs::File, path::Path};
 
 /// 初始化日志：优先尝试终端输出，然后写入文件，所有错误均捕获并打印到 stderr

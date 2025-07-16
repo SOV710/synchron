@@ -1,4 +1,3 @@
-````markdown
 # syncing
 
 ## 项目简介
@@ -7,9 +6,7 @@
 ## 功能特性
 - **双向同步**：任意一侧的新增、修改或删除都会自动反向同步。
 - **实时监控**：基于 `notify-debouncer-mini` 实现防抖监控，支持可配置的防抖时长。
-- **排除模式**：根目录及其所有子目录中支持 `.syncingignore` 文件，用 Glob 模式忽略指定文件或文件夹。
-- **日志记录**：内置 `simplelog`，同时输出到终端和配置文件（默认 `~/.local/share/syncing/syncing.log`），可自定义日志级别和路径。
-- **命令行配置**：通过 `clap` 提供友好的 CLI 界面，支持参数校验与帮助文档。
+- **排除模式**：根目录及其所有子目录中支持 `.syncingignore` 文件，用类似于 .gitignore 的模式忽略指定文件或文件夹。
 
 ## 安装步骤
 ```bash
@@ -19,7 +16,6 @@ cd syncing
 
 # 使用 Rust 工具链编译并安装
 cargo install --path .
-````
 
 ## 使用示例
 
@@ -51,7 +47,3 @@ syncing /dirA /dirB --log-file /home/user/.local/share/syncing/sync.log
 ## 许可证信息
 
 本项目遵循 MIT 许可证，详见 [LICENSE](./LICENSE) 文件。
-
-```
-::contentReference[oaicite:0]{index=0}
-```

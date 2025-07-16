@@ -9,11 +9,11 @@ mod watcher;
 use clap::Parser;
 use crossbeam_channel::unbounded;
 use ignore_config::IgnoreMatcher;
-use logger::init_logging;
 use log::{debug, error};
+use logger::init_logging;
 use notify_debouncer_mini::DebouncedEvent;
-use sync::handle_event;
 use std::process;
+use sync::handle_event;
 use watcher::build_watcher;
 
 fn main() {
