@@ -12,7 +12,7 @@ readme = "README.md"
 keywords = ["sync", "filesync", "realtime", "files"]
 categories = ["command-line-utilities", "file-management", "system-tools", "monitoring"]
 edition = "2021"
-rust-version = "1.90.0-nightly"
+rust-version = "1.90.0"
 
 [[bin]]
 name = "synchron"
