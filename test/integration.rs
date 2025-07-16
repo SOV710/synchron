@@ -11,8 +11,8 @@ fn test_cli_sync_roundtrip() {
     // 在 dir_a 中创建文件
     dir_a.child("x.txt").write_str("ABC").unwrap();
 
-    // 运行 syncing 命令
-    let mut cmd = Command::cargo_bin("syncing").unwrap();
+    // 运行 synchron 命令
+    let mut cmd = Command::cargo_bin("synchron").unwrap();
     cmd.arg(dir_a.path())
        .arg(dir_b.path())
        // 使用短防抖以加快测试

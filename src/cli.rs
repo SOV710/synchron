@@ -46,11 +46,11 @@ fn parse_debounce(s: &str) -> Result<u64, String> {
     }
 }
 
-/// 运行时计算默认日志路径：$HOME/.local/share/syncing/syncing.log
+/// 运行时计算默认日志路径：$HOME/.local/share/synchron/synchron.log
 fn default_log_file() -> PathBuf {
     let home = env::var_os("HOME").unwrap_or_else(|| OsString::from("."));
     let mut p = PathBuf::from(home);
-    p.push(".local/share/syncing/syncing.log");
+    p.push(".local/share/synchron/synchron.log");
     p
 }
 

@@ -23,7 +23,7 @@ fn main() {
     // 2. 初始化日志
     init_logging(&opt.log_file);
 
-    // 3. 加载各目录的 .syncingignore 规则
+    // 3. 加载各目录的 .synchronignore 规则
     let matcher_a = IgnoreMatcher::from_dir(&opt.dir_a);
     let matcher_b = IgnoreMatcher::from_dir(&opt.dir_b);
 

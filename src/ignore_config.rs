@@ -13,7 +13,7 @@ impl IgnoreMatcher {
         // 构造 builder
         let mut builder = GitignoreBuilder::new(dir);
 
-        // 收集从根到目标目录的所有 .syncingignore
+        // 收集从根到目标目录的所有 .synchronignore
         let mut ancestors = Vec::new();
         let mut cur = Some(dir.as_path());
         while let Some(p) = cur {
@@ -22,10 +22,10 @@ impl IgnoreMatcher {
         }
         // 现在 ancestors = [dir, parent, ..., root]，反转为 root→dir
         for path in ancestors.into_iter().rev() {
-            let ignore_file = path.join(".syncingignore");
+            let ignore_file = path.join(".synchronignore");
             if ignore_file.exists() {
                 if let Some(e) = builder.add(ignore_file.clone()) {
-                    warn!("加载 .syncingignore {:?} 失败: {}", ignore_file, e);
+                    warn!("加载 .synchronignore {:?} 失败: {}", ignore_file, e);
                 }
             }
         }
@@ -65,8 +65,8 @@ mod tests {
     fn test_ignorematcher_simple() {
         let d = tempdir().unwrap();
         let root = d.path().to_path_buf();
-        // 写 .syncingignore 忽略 *.log
-        fs::write(root.join(".syncingignore"), "*.log\n").unwrap();
+        // 写 .synchronignore 忽略 *.log
+        fs::write(root.join(".synchronignore"), "*.log\n").unwrap();
         let im = IgnoreMatcher::from_dir(&root);
         let file1 = root.join("a.txt");
         let file2 = root.join("b.log");
