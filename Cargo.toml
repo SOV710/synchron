@@ -10,7 +10,7 @@ homepage = "https://github.com/SOV710/synchron"
 documentation = "https://docs.rs/synchron"
 readme = "README.md"
 keywords = ["sync", "filesync", "realtime", "files"]
-categories = ["command-line-utilities", "file-management", "system-tools", "monitoring"]
+categories = ["accessibility", "asynchronous", "command-line-utilities"]
 edition = "2021"
 rust-version = "1.90.0"
 
