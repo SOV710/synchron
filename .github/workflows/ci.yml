@@ -49,6 +49,7 @@ jobs:
       uses: dtolnay/rust-toolchain@nightly
       with:
         targets: ${{ matrix.target }}
+        components: rustfmt
 
     - name: Format
       run: cargo fmt --all -- --check
