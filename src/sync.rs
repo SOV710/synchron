@@ -11,16 +11,16 @@ pub fn handle_event(path: &Path, opt: &Opt) -> Result<()> {
     } else if path.starts_with(&opt.dir_b) {
         (&opt.dir_b, &opt.dir_a)
     } else {
-        trace!("忽略非监控路径事件: {:?}", path);
+        trace!("忽略非监控路径事件: {:?}", path.display());
         return Ok(());
     };
 
     // 2. 计算相对路径并跳过根目录自身事件
     let rel = path
         .strip_prefix(src_root)
-        .with_context(|| format!("strip_prefix 失败: {:?}", path))?;
+        .with_context(|| format!("strip_prefix 失败: {:?}", path.display()))?;
     if rel.as_os_str().is_empty() {
-        trace!("忽略根目录事件: {:?}", path);
+        trace!("忽略根目录事件: {:?}", path.display());
         return Ok(());
     }
 
@@ -31,36 +31,42 @@ pub fn handle_event(path: &Path, opt: &Opt) -> Result<()> {
     if path.exists() {
         // 4.1 仅在存在的情况下，读取元数据判断是否为符号链接
         let meta = fs::symlink_metadata(path)
-            .with_context(|| format!("读取文件元数据失败: {:?}", path))?;
+            .with_context(|| format!("读取文件元数据失败: {:?}", path.display()))?;
         if meta.file_type().is_symlink() {
-            debug!("忽略符号链接: {:?}", path);
+            debug!("忽略符号链接: {:?}", path.display());
             return Ok(());
         }
 
         // 4.2 目录 vs 文件
         if meta.file_type().is_dir() {
             fs::create_dir_all(&dst_path)
-                .with_context(|| format!("创建目录失败: {:?}", dst_path))?;
-            debug!("创建目录: {:?}", dst_path);
+                .with_context(|| format!("创建目录失败: {:?}", dst_path.display()))?;
+            debug!("创建目录: {:?}", dst_path.display());
         } else {
             if let Some(parent) = dst_path.parent() {
                 fs::create_dir_all(parent)
-                    .with_context(|| format!("创建父目录失败: {:?}", parent))?;
+                    .with_context(|| format!("创建父目录失败: {:?}", parent.display()))?;
             }
-            fs::copy(path, &dst_path)
-                .with_context(|| format!("复制文件失败 {:?} -> {:?}", path, dst_path))?;
-            debug!("复制文件: {:?} -> {:?}", path, dst_path);
+            fs::copy(path, &dst_path).with_context(|| {
+                format!(
+                    "复制文件失败 {:?} -> {:?}",
+                    path.display(),
+                    dst_path.display()
+                )
+            })?;
+            debug!("复制文件: {:?} -> {:?}", path.display(), dst_path.display());
         }
     }
     // 5. 源不存在且目标存在：删除目标
     else if dst_path.exists() {
         if dst_path.is_dir() {
             fs::remove_dir_all(&dst_path)
-                .with_context(|| format!("删除目录失败: {:?}", dst_path))?;
-            debug!("删除目录: {:?}", dst_path);
+                .with_context(|| format!("删除目录失败: {:?}", dst_path.display()))?;
+            debug!("删除目录: {:?}", dst_path.display());
         } else {
-            fs::remove_file(&dst_path).with_context(|| format!("删除文件失败: {:?}", dst_path))?;
-            debug!("删除文件: {:?}", dst_path);
+            fs::remove_file(&dst_path)
+                .with_context(|| format!("删除文件失败: {:?}", dst_path.display()))?;
+            debug!("删除文件: {:?}", dst_path.display());
         }
     }
 

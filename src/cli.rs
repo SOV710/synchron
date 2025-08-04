@@ -26,10 +26,10 @@ pub struct Opt {
 fn parse_dir(s: &str) -> Result<PathBuf, String> {
     let p = PathBuf::from(s);
     if !p.exists() {
-        return Err(format!("Path does not exist: {:?}", p));
+        return Err(format!("Path does not exist: {p:?}"));
     }
     if !p.is_dir() {
-        return Err(format!("Path is not a directory: {:?}", p));
+        return Err(format!("Path is not a directory: {p:?}"));
     }
     Ok(p)
 }
@@ -38,7 +38,7 @@ fn parse_dir(s: &str) -> Result<PathBuf, String> {
 fn parse_debounce(s: &str) -> Result<u64, String> {
     let v: u64 = s
         .parse()
-        .map_err(|_| format!("debounce_ms must be an integer: {}", s))?;
+        .map_err(|_| format!("debounce_ms must be an integer: {s}"))?;
     if v == 0 || v > 60_000 {
         Err("debounce_ms must be between 1 and 60000.".into())
     } else {
