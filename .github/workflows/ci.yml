@@ -15,6 +15,7 @@ jobs:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
         include:
           # Linux targets
