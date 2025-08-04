@@ -25,7 +25,7 @@ impl IgnoreMatcher {
             let ignore_file = path.join(".synchronignore");
             if ignore_file.exists() {
                 if let Some(e) = builder.add(ignore_file.clone()) {
-                    warn!("加载 .synchronignore {:?} 失败: {}", ignore_file, e);
+                    warn!("加载 .synchronignore {:?} 失败: {e}", ignore_file.display());
                 }
             }
         }
@@ -34,7 +34,7 @@ impl IgnoreMatcher {
         let matcher = match builder.build() {
             Ok(m) => m,
             Err(e) => {
-                warn!("构建 IgnoreMatcher 失败，忽略所有规则: {}", e);
+                warn!("构建 IgnoreMatcher 失败，忽略所有规则: {e}");
                 GitignoreBuilder::new(dir).build().unwrap()
             }
         };
