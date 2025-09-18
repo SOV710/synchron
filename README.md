@@ -1,6 +1,6 @@
 # synchron
 
-  :warning: <i>warning: <i>This project is in an early development phase and is not ready for production.</i>
+  :warning: <i>warning: <i>This project is in an early development phase and is not ready for use.</i> </i>
 <br />
 
 synchron is a tool for synchronizing multiple local folders, supporting multi-directional real-time transfers. Inspired by syncthing
