@@ -1,0 +1,11 @@
+[package]
+name = "synchron-manager"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+license = { workspace = true }
+
+[[bin]]
+name = "synchron-manager"
+path = "src/main.rs"
+
