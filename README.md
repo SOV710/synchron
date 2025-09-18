@@ -1,5 +1,9 @@
 # synchron
 
+<br/>
+  :warning: <i>This project is in very early development state</i>
+<br />
+
 synchron is a tool for synchronizing multiple local folders, supporting multi-directional real-time transfers. Inspired by syncthing
 
 ## Installation
