@@ -86,27 +86,3 @@ pub struct fanotify_response {
     pub fd: i32,
     pub response: u32,
 }
-
-/// Variable-length file_handle header used by FAN_REPORT_FID
-/// (flexible array member f_handle[0] omitted)
-#[repr(C)]
-pub struct file_handle {
-    pub handle_bytes: u32,
-    pub handle_type: i32,
-    // pub f_handle: [u8; 0], // flexible tail
-}
-
-/// Generic info header used by fanotify info records (e.g., FID)
-#[repr(C)]
-pub struct fanotify_event_info_header {
-    pub info_type: u8,
-    pub pad: u8,
-    pub len: u16,
-}
-
-/// FID info record header (points to file_handle payload)
-#[repr(C)]
-pub struct fanotify_event_info_fid {
-    pub hdr: fanotify_event_info_header,
-    pub fh: file_handle,
-}

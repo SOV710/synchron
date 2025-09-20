@@ -13,19 +13,13 @@ pub const EPOLLPRI: u32 = 0x002;
 pub const EPOLLOUT: u32 = 0x004;
 pub const EPOLLERR: u32 = 0x008;
 pub const EPOLLHUP: u32 = 0x010;
-pub const EPOLLRDNORM: u32 = 0x040;
-pub const EPOLLRDBAND: u32 = 0x080;
-pub const EPOLLWRNORM: u32 = 0x100;
-pub const EPOLLWRBAND: u32 = 0x200;
-pub const EPOLLMSG: u32 = 0x400;
+// pub const EPOLLRDNORM: u32 = 0x040;
+// pub const EPOLLRDBAND: u32 = 0x080;
+// pub const EPOLLWRNORM: u32 = 0x100;
+// pub const EPOLLWRBAND: u32 = 0x200;
+// pub const EPOLLMSG: u32 = 0x400;
 pub const EPOLLRDHUP: u32 = 0x2000;
-pub const EPOLLEXCLUSIVE: u32 = 1 << 28;
-pub const EPOLLWAKEUP: u32 = 1 << 29;
+// pub const EPOLLEXCLUSIVE: u32 = 1 << 28;
+// pub const EPOLLWAKEUP: u32 = 1 << 29;
 pub const EPOLLONESHOT: u32 = 1 << 30;
 pub const EPOLLET: u32 = 1 << 31;
-
-#[repr(C)]
-pub struct epoll_event {
-    pub events: u32,
-    pub epoll_data_t: u64, // 与 union epoll_data_t 对齐（最通用）
-}

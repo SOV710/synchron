@@ -29,7 +29,7 @@ pub const FAN_MOVE_SELF: u64 = 0x0000_0800;
 pub const FAN_OPEN_EXEC: u64 = 0x0000_1000;
 
 pub const FAN_Q_OVERFLOW: u64 = 0x0000_4000;
-pub const FAN_FS_ERROR: u64 = 0x0000_8000;
+// pub const FAN_FS_ERROR: u64 = 0x0000_8000;
 
 pub const FAN_OPEN_PERM: u64 = 0x0001_0000;
 pub const FAN_ACCESS_PERM: u64 = 0x0002_0000;
@@ -41,12 +41,12 @@ pub const FAN_ONDIR: u64 = 0x4000_0000;
 
 // helper events
 pub const FAN_CLOSE: u64 = FAN_CLOSE_WRITE | FAN_CLOSE_NOWRITE;
-pub const FAN_MOVE: u64 = FAN_MOVED_FROM | FAN_MOVED_TO;
+// pub const FAN_MOVE: u64 = FAN_MOVED_FROM | FAN_MOVED_TO;
 
 // Deprecated convenience sets (保留与 C 一致，勿在新代码使用)
-pub const FAN_ALL_EVENTS: u64 = FAN_ACCESS | FAN_MODIFY | FAN_CLOSE | FAN_OPEN;
-pub const FAN_ALL_PERM_EVENTS: u64 = FAN_OPEN_PERM | FAN_ACCESS_PERM;
-pub const FAN_ALL_OUTGOING_EVENTS: u64 = FAN_ALL_EVENTS | FAN_ALL_PERM_EVENTS | FAN_Q_OVERFLOW;
+// pub const FAN_ALL_EVENTS: u64 = FAN_ACCESS | FAN_MODIFY | FAN_CLOSE | FAN_OPEN;
+// pub const FAN_ALL_PERM_EVENTS: u64 = FAN_OPEN_PERM | FAN_ACCESS_PERM;
+// pub const FAN_ALL_OUTGOING_EVENTS: u64 = FAN_ALL_EVENTS | FAN_ALL_PERM_EVENTS | FAN_Q_OVERFLOW;
 
 // ===========================
 // fanotify_init() flags (u32) – 不是 mask
@@ -62,7 +62,7 @@ pub const FAN_CLASS_PRE_CONTENT: u32 = 0x0000_0008;
 // resource limits / audit
 pub const FAN_UNLIMITED_QUEUE: u32 = 0x0000_0010;
 pub const FAN_UNLIMITED_MARKS: u32 = 0x0000_0020;
-pub const FAN_ENABLE_AUDIT: u32 = 0x0000_0040;
+// pub const FAN_ENABLE_AUDIT: u32 = 0x0000_0040;
 
 // event record format controls
 pub const FAN_REPORT_PIDFD: u32 = 0x0000_0080;
@@ -79,9 +79,8 @@ pub const FAN_REPORT_DFID_NAME_TARGET: u32 =
     FAN_REPORT_DFID_NAME | FAN_REPORT_FID | FAN_REPORT_TARGET_FID;
 
 // Deprecated aggregate
-pub const FAN_ALL_CLASS_BITS: u32 = FAN_CLASS_NOTIF | FAN_CLASS_CONTENT | FAN_CLASS_PRE_CONTENT;
-pub const FAN_ALL_INIT_FLAGS: u32 =
-    FAN_CLOEXEC | FAN_NONBLOCK | FAN_ALL_CLASS_BITS | FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS;
+// pub const FAN_ALL_CLASS_BITS: u32 = FAN_CLASS_NOTIF | FAN_CLASS_CONTENT | FAN_CLASS_PRE_CONTENT;
+// pub const FAN_ALL_INIT_FLAGS: u32 = FAN_CLOEXEC | FAN_NONBLOCK | FAN_ALL_CLASS_BITS | FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS;
 
 // ===========================
 // fanotify_modify_mark() flags (u32)

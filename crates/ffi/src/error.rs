@@ -1,7 +1,7 @@
 use core::fmt;
 use std::io;
 
-use crate::flags::errno::{self as e, EPROTO};
+use crate::flags::errno::{self as e};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Errno {

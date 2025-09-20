@@ -108,12 +108,14 @@ impl FanotifyEventMask {
     pub const MOVE_SELF: Self = Self(fflag::FAN_MOVE_SELF);
     pub const MOVED_FROM: Self = Self(fflag::FAN_MOVED_FROM);
     pub const MOVED_TO: Self = Self(fflag::FAN_MOVED_TO);
+    pub const RENAME: Self = Self(fflag::FAN_RENAME);
     pub const EVENT_ON_CHILD: Self = Self(fflag::FAN_EVENT_ON_CHILD);
     pub const ONDIR: Self = Self(fflag::FAN_ONDIR);
     pub const CLOSE: Self = Self(fflag::FAN_CLOSE);
     pub const OPEN_PERM: Self = Self(fflag::FAN_OPEN_PERM);
     pub const ACCESS_PERM: Self = Self(fflag::FAN_ACCESS_PERM);
     pub const OPEN_EXEC_PERM: Self = Self(fflag::FAN_OPEN_EXEC_PERM);
+    pub const Q_OVERFLOW: Self = Self(fflag::FAN_Q_OVERFLOW);
 }
 impl core::ops::BitOr for FanotifyEventMask {
     type Output = Self;
