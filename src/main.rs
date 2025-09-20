@@ -31,28 +31,28 @@ fn main() {
     let (tx, rx) = unbounded::<DebouncedEvent>();
 
     // 5. 创建并启动两个 watcher
-    if let Err(e) = build_watcher(&opt.dir_a, tx.clone(), opt.debounce_ms) {
-        error!("创建监视器 A 失败: {e}");
+    if let Err(e) = build_watcher(opt.dir_a.clone(), tx.clone(), opt.debounce_ms) {
+        error!("创建监视器 A 失败: {}", e);
         process::exit(1);
     }
-    if let Err(e) = build_watcher(&opt.dir_b, tx, opt.debounce_ms) {
-        error!("创建监视器 B 失败: {e}");
+    if let Err(e) = build_watcher(opt.dir_b.clone(), tx.clone(), opt.debounce_ms) {
+        error!("创建监视器 B 失败: {}", e);
         process::exit(1);
     }
 
     // 6. 事件循环：处理每一个去抖后事件
-    for event in &rx {
+    for event in rx.iter() {
         let path = &event.path;
 
         // 6.1 路径被忽略则跳过
         if matcher_a.is_ignored(path) || matcher_b.is_ignored(path) {
-            debug!("忽略路径: {:?}", path.display());
+            debug!("忽略路径: {:?}", path);
             continue;
         }
 
         // 6.2 同步该文件或目录
         if let Err(e) = handle_event(path, &opt) {
-            error!("同步失败 {:?}: {e}", path.display());
+            error!("同步失败 {:?}: {}", path, e);
         }
     }
 }
