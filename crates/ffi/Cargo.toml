@@ -1,5 +1,5 @@
 [package]
-name = "synchron-watcher"
+name = "synchron-ffi"
 version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }
@@ -8,11 +8,3 @@ license = { workspace = true }
 
 [lib]
 path = "src/lib.rs"
-
-[dependencies]
-inotify = "0.11.0"
-synchron-common = { path = "../common/" }
-synchron-ffi = { path = "../ffi/" }
-thiserror = { workspace = true }
-walkdir = "2.5.0"
-

@@ -6,7 +6,7 @@ members = ["crates/*"]
 version = "0.1.0"
 authors = ["SOV710 <chris916911179@outlook.com"]
 edition = "2021"
-rust-version = "1.90.2"
+rust-version = "1.90.0"
 description = "A real-time folder synchronization tool, inspired by Syncthing."
 documentation = "https://docs.rs/synchron"
 readme = "README.md"
@@ -18,14 +18,12 @@ keywords = ["files", "filesync", "realtime", "sync"]
 categories = ["accessibility", "asynchronous", "command-line-utilities"]
 
 [workspace.dependencies]
-thiserror = "2.0.16"
 clap = { version = "4.5", features = ["derive"] }
 crossbeam-channel = "0.5"
 ignore = "0.4"
 log = "0.4"
-notify = "8.1"
-notify-debouncer-mini = "0.6"
 simplelog = "0.12"
+thiserror = "2.0.16"
 
 [profile.release]
 strip = "symbols"

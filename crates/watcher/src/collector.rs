@@ -1,9 +1,9 @@
-use common::Side;
 use inotify::{Inotify, WatchDescriptor, WatchMask};
 use std::{
     io,
     path::{Path, PathBuf},
 };
+use synchron_common::*;
 use thiserror::Error;
 use walkdir::WalkDir;
 

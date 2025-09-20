@@ -209,6 +209,10 @@ name = "synchron-executor"
 version = "0.1.0"
 
 [[package]]
+name = "synchron-ffi"
+version = "0.1.0"
+
+[[package]]
 name = "synchron-manager"
 version = "0.1.0"
 
@@ -221,6 +225,8 @@ name = "synchron-watcher"
 version = "0.1.0"
 dependencies = [
  "inotify",
+ "synchron-common",
+ "synchron-ffi",
  "thiserror",
  "walkdir",
 ]
