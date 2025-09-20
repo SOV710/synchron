@@ -27,6 +27,6 @@ thiserror = "2.0.16"
 
 [profile.release]
 strip = "symbols"
-lto = "fat"
+lto = "thin"
 codegen-units = 1
 

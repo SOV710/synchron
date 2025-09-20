@@ -1,13 +1,11 @@
 #![allow(non_camel_case_types)]
 
-use core::ffi::{c_char, c_void};
+use core::ffi::c_void;
 
 pub type c_int = i32;
 pub type c_uint = u32;
-pub type c_long = isize; // maps to pointer-sized long (arch dependent)
 pub type size_t = usize;
 pub type ssize_t = isize;
-pub type pid_t = i32;
 pub type RawFd = i32;
 
 /// Union used by epoll_event.
@@ -112,6 +110,3 @@ pub struct fanotify_event_info_fid {
     pub hdr: fanotify_event_info_header,
     pub fh: file_handle,
 }
-
-/// Borrow core::ffi names for users of this crate
-pub use core::ffi::{c_char as c_char_t, c_void as c_void_t};

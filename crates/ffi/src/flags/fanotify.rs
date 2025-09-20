@@ -118,6 +118,20 @@ pub const FAN_ALL_MARK_FLAGS: u32 = FAN_MARK_ADD
     | FAN_MARK_FLUSH;
 
 // ===========================
+// Responses to a _PERM event
+// ===========================
+
+pub const FAN_ALLOW: u32 = 0x01;
+pub const FAN_DENY: u32 = 0x02;
+pub const FAN_AUDIT: u32 = 0x10; // bitmask to create audit record for result
+pub const FAN_INFO: u32 = 0x20; // bitmask to indicate additional information
+
+// No fd set in event
+pub const FAN_NOFD: i32 = -1;
+pub const FAN_NOPIDFD: i32 = FAN_NOFD;
+pub const FAN_EPIDFD: i32 = -2;
+
+// ===========================
 // Misc numbers
 // ===========================
 pub const FANOTIFY_METADATA_VERSION: u8 = 3;
