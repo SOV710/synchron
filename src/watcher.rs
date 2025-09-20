@@ -7,12 +7,12 @@ use notify::RecursiveMode;
 use notify_debouncer_mini::{
     new_debouncer, notify::RecommendedWatcher, DebounceEventResult, DebouncedEvent, Debouncer,
 };
-use std::{path::Path, time::Duration};
+use std::{path::PathBuf, time::Duration};
 
 /// 创建防抖 watcher，返回 Debouncer<RecommendedWatcher>
 /// 并在后台线程消费底层原始事件以防阻塞
 pub fn build_watcher(
-    dir: &Path,
+    dir: &PathBuf,
     tx: Sender<DebouncedEvent>,
     debounce_ms: u64,
 ) -> Result<Debouncer<RecommendedWatcher>> {
@@ -36,7 +36,7 @@ pub fn build_watcher(
     // 递归监视目标目录
     debouncer
         .watcher()
-        .watch(dir, RecursiveMode::Recursive)
+        .watch(&dir, RecursiveMode::Recursive)
         .context(format!("监视目录 {:?} 失败", dir.display()))?;
 
     Ok(debouncer)
