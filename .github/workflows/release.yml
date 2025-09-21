@@ -1,0 +1,257 @@
+name: Build and Package Releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          # Linux targets
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-24.04
+            arch: amd64
+          - target: i686-unknown-linux-gnu
+            os: ubuntu-24.04
+            arch: i386
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04
+            arch: arm64
+          # Windows targets
+          - target: x86_64-pc-windows-gnu
+            os: ubuntu-24.04
+            arch: amd64
+          - target: i686-pc-windows-gnu
+            os: ubuntu-24.04
+            arch: i386
+          # macOS targets
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            arch: amd64
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            arch: arm64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.target }}
+        components: rustfmt,clippy
+
+    - name: Install cross-compilation dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-multilib
+        
+        # Install cross-compilation tools for different architectures
+        if [[ "${{ matrix.target }}" == "i686-unknown-linux-gnu" ]]; then
+          sudo apt-get install -y gcc-i686-linux-gnu
+        elif [[ "${{ matrix.target }}" == "aarch64-unknown-linux-gnu" ]]; then
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+        elif [[ "${{ matrix.target }}" == *"windows"* ]]; then
+          sudo apt-get install -y gcc-mingw-w64
+        fi
+
+    - name: Build binary
+      run: cargo build --release --target ${{ matrix.target }}
+
+    - name: Upload binary artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary-${{ matrix.target }}
+        path: |
+          target/${{ matrix.target }}/release/synchron${{ contains(matrix.target, 'windows') && '.exe' || '' }}
+
+  package:
+    name: Package releases
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Install packaging dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tar gzip xz-utils p7zip-full dpkg-dev ruby-dev build-essential genisoimage
+        sudo gem install --no-document fpm
+
+    - name: Extract version from Cargo.toml
+      id: version
+      run: |
+        VERSION=$(grep -E '^version\s*=' Cargo.toml | head -1 | sed -E 's/version\s*=\s*"([^"]+)"/\1/')
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    - name: Prepare directories
+      run: |
+        mkdir -p build dist
+        # Restructure artifacts to match expected paths
+        find artifacts -name "synchron*" -type f | while read -r file; do
+          target=$(basename $(dirname "$file") | sed 's/binary-//')
+          mkdir -p "target/${target}/release"
+          cp "$file" "target/${target}/release/"
+        done
+
+    - name: Package Linux releases
+      run: |
+        declare -A LINUX_TARGETS=(
+          [x86_64-unknown-linux-gnu]=amd64
+          [i686-unknown-linux-gnu]=i386
+          [aarch64-unknown-linux-gnu]=arm64
+        )
+        
+        DOC_FILES=(LICENSE README.md README_zh.md)
+        NAME="synchron"
+        VERSION="${{ steps.version.outputs.version }}"
+        
+        for target in "${!LINUX_TARGETS[@]}"; do
+          arch_label="${LINUX_TARGETS[$target]}"
+          stage="build/${NAME}-${VERSION}-${target}"
+          bin_src="target/${target}/release/${NAME}"
+          install_bin="${stage}/usr/local/bin"
+          doc_dir="${stage}/usr/local/share/doc/${NAME}"
+          
+          if [[ ! -x "$bin_src" ]]; then
+            echo "Warning: binary not found for target $target, skipping"
+            continue
+          fi
+          
+          # Create staging layout
+          mkdir -p "$install_bin" "$doc_dir"
+          
+          # Copy binary and docs
+          cp "$bin_src" "$install_bin/"
+          for f in "${DOC_FILES[@]}"; do
+            if [[ -f "$f" ]]; then
+              cp "$f" "$doc_dir/"
+            fi
+          done
+          
+          # Create .tar.gz
+          tar czf "dist/${NAME}-${VERSION}-${target}.tar.gz" -C "$stage" .
+          
+          # Create .pkg.tar.xz
+          tar cJf "dist/${NAME}-${VERSION}-${target}.pkg.tar.xz" -C "$stage" .
+          
+          # Create .deb
+          fpm -s dir -t deb \
+              -n "$NAME" -v "$VERSION" --architecture "$arch_label" \
+              --prefix / \
+              -C "$stage" . \
+              --package "dist/"
+          
+          # Create .rpm
+          fpm -s dir -t rpm \
+              -n "$NAME" -v "$VERSION" --architecture "$arch_label" \
+              --prefix / \
+              -C "$stage" . \
+              --package "dist/"
+          
+          echo "Packaged for $target → .tar.gz .pkg.tar.xz .deb .rpm"
+        done
+
+    - name: Package Windows releases
+      run: |
+        WINDOWS_TARGETS=(x86_64-pc-windows-gnu i686-pc-windows-gnu)
+        DOC_FILES=(LICENSE README.md README_zh.md)
+        NAME="synchron"
+        VERSION="${{ steps.version.outputs.version }}"
+        
+        for target in "${WINDOWS_TARGETS[@]}"; do
+          stage="build/${NAME}-${VERSION}-${target}"
+          bin_src="target/${target}/release/${NAME}.exe"
+          
+          if [[ ! -f "$bin_src" ]]; then
+            echo "Warning: Windows binary not found for $target, skipping"
+            continue
+          fi
+          
+          tmp_archive="build/${NAME}-${VERSION}-${target}.7z"
+          out_exe="dist/${NAME}-${VERSION}-${target}.exe"
+          
+          # Prepare staging
+          rm -rf "$stage"
+          mkdir -p "$stage"
+          cp "$bin_src" "$stage/"
+          for f in "${DOC_FILES[@]}"; do
+            if [[ -f "$f" ]]; then
+              cp "$f" "$stage/"
+            fi
+          done
+          
+          # Create SFX
+          pushd "$stage" >/dev/null
+            7z a -mx=9 "../$(basename "$tmp_archive")" ./*
+            SFX_MODULE=$(dpkg -L p7zip-full | grep '7z\.sfx$' | head -1)
+            cat "$SFX_MODULE" "../$(basename "$tmp_archive")" > "../$(basename "$out_exe")"
+          popd >/dev/null
+          
+          rm "$tmp_archive"
+          echo "Packaged Windows SFX: $out_exe"
+        done
+
+    - name: Package macOS releases
+      run: |
+        DARWIN_TARGETS=(x86_64-apple-darwin aarch64-apple-darwin)
+        DOC_FILES=(LICENSE README.md README_zh.md)
+        NAME="synchron"
+        VERSION="${{ steps.version.outputs.version }}"
+        
+        for target in "${DARWIN_TARGETS[@]}"; do
+          bin_src="target/${target}/release/${NAME}"
+          
+          if [[ ! -x "$bin_src" ]]; then
+            echo "Warning: macOS binary not found for $target, skipping"
+            continue
+          fi
+          
+          stage="build/${NAME}-${VERSION}-${target}"
+          rm -rf "$stage"
+          mkdir -p "$stage"/{Applications,Documents}
+          cp "$bin_src" "$stage/Applications/"
+          for f in "${DOC_FILES[@]}"; do
+            if [[ -f "$f" ]]; then
+              cp "$f" "$stage/Documents/"
+            fi
+          done
+          
+          out_dmg="dist/${NAME}-${VERSION}-${target}.dmg"
+          genisoimage -V "${NAME}_${VERSION}_${target}" -D -hfs -no-pad \
+            -o "$out_dmg" "$stage"
+          
+          echo "Packaged macOS .dmg: $out_dmg"
+        done
+
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-packages
+        path: dist/*
+
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/*
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
