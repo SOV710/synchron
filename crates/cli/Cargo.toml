@@ -8,3 +8,14 @@ license = { workspace = true }
 [[bin]]
 name = "synchron"
 path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+synchron-common = { path = "../common/" }
+synchron-ffi = { path = "../ffi/" }
+thiserror = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+

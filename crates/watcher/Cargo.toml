@@ -10,9 +10,9 @@ license = { workspace = true }
 path = "src/lib.rs"
 
 [dependencies]
-inotify = "0.11.0"
+ignore = "0.4"
 synchron-common = { path = "../common/" }
 synchron-ffi = { path = "../ffi/" }
 thiserror = { workspace = true }
-walkdir = "2.5.0"
+tokio = { workspace = true }
 

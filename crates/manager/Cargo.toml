@@ -9,3 +9,8 @@ license = { workspace = true }
 name = "synchron-manager"
 path = "src/main.rs"
 
+[dependencies]
+clap = { workspace = true }
+synchron-common = { path = "../common/" }
+tokio = { workspace = true }
+

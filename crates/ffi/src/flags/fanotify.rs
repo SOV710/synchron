@@ -1,4 +1,5 @@
 #![allow(non_camel_case_types, non_upper_case_globals)]
+#![allow(dead_code)]
 use core::mem;
 #[repr(C)]
 pub struct fanotify_event_metadata {

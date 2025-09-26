@@ -1,4 +1,5 @@
 #![allow(non_upper_case_globals)]
+#![allow(dead_code)]
 #[cfg(target_os = "linux")]
 
 pub const O_ACCMODE: i32 = 0o0000003;
