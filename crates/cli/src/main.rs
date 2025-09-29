@@ -7,7 +7,6 @@ use crate::init_service::*;
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::env;
 use std::io;
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
@@ -87,12 +86,6 @@ pub enum Service {
     Enable,
     Disable,
     Restart,
-}
-
-// ======== Env utils ========
-// set environment variables utils function
-fn getenv_or(key: &str, default: &str) -> String {
-    env::var(key).unwrap_or_else(|_| default.to_string())
 }
 
 // ===========================
@@ -224,16 +217,16 @@ pub enum LogLevel {
 }
 
 #[derive(serde::Serialize)]
-struct Request<'a> {
-    op: &'a str,
+struct Request {
+    op: &'static str,
     id: u64,
-    ts: &'a str,
+    ts: String,
     #[serde(flatten)]
-    params: Params<'a>,
+    params: Params,
 }
 
 #[derive(Serialize, Deserialize)]
-enum Params<'a> {
+enum Params {
     // pair.*
     PairAdd(PairAddParams),
     PairRemove {
@@ -363,9 +356,9 @@ fn unwrap_ok(resp: Value) -> io::Result<Value> {
     ))
 }
 
-// ============================
-// HERE START THE MAIN FUNCTION
-// ============================
+// ==================================================
+// ========== HERE START THE MAIN FUNCTION ==========
+// ==================================================
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
@@ -634,7 +627,7 @@ async fn main() {
             }
         }
 
-        Action::Log { target, output } => {
+        Action::Log { target, output } => 'log_branch: {
             let (scope, pid) = if target == "--all" {
                 ("all", serde_json::Value::Null)
             } else {
@@ -658,81 +651,74 @@ async fn main() {
 
             if let Err(e) = send_json(&mut w, &req).await {
                 eprintln!("send failed: {e}");
-                1
-            } else {
-                // 打开输出（若有）
-                let mut file = if let Some(path) = output {
-                    match tokio::fs::File::create(&path).await {
-                        Ok(f) => Some(f),
-                        Err(e) => {
-                            eprintln!("open output failed: {e}");
-                            return 4;
-                        }
-                    }
-                } else {
-                    None
-                };
+                break 'log_branch 1;
+            }
 
-                // 连续读取事件
-                loop {
-                    match recv_json(&mut r).await {
-                        Ok(v) => {
-                            if v.get("type").and_then(|x| x.as_str()) == Some("log.eof") {
-                                break;
-                            }
-                            // 兼容两种返回：直接是 log 事件，或响应包裹里 data=事件
-                            let evt = if v.get("type").is_some() {
-                                v
-                            } else {
-                                v.get("data").cloned().unwrap_or(v)
-                            };
-
-                            if let (Some(ts), Some(level), Some(msg)) = (
-                                evt.get("ts").and_then(|x| x.as_str()),
-                                evt.get("level").and_then(|x| x.as_str()),
-                                evt.get("msg").and_then(|x| x.as_str()),
-                            ) {
-                                let line = format!("{ts} {level:<5} {msg}\n");
-                                if let Some(f) = file.as_mut() {
-                                    if let Err(e) =
-                                        tokio::io::AsyncWriteExt::write_all(f, line.as_bytes())
-                                            .await
-                                    {
-                                        eprintln!("write file failed: {e}");
-                                        break;
-                                    }
-                                } else {
-                                    print!("{line}");
-                                }
-                            } else {
-                                // 非标准日志，直接 dump
-                                let s = v.to_string();
-                                if let Some(f) = file.as_mut() {
-                                    if let Err(e) =
-                                        tokio::io::AsyncWriteExt::write_all(f, s.as_bytes()).await
-                                    {
-                                        eprintln!("write file failed: {e}");
-                                        break;
-                                    }
-                                    if let Err(e) =
-                                        tokio::io::AsyncWriteExt::write_all(f, b"\n").await
-                                    {
-                                        eprintln!("write file failed: {e}");
-                                        break;
-                                    }
-                                } else {
-                                    println!("{s}");
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            eprintln!("log stream end: {e}");
-                            break;
-                        }
+            // 打开输出（若有）
+            let mut file = if let Some(path) = output {
+                match tokio::fs::File::create(&path).await {
+                    Ok(f) => Some(f),
+                    Err(e) => {
+                        eprintln!("open output failed: {e}");
+                        break 'log_branch 4; // 提前结束这个分支，返回退出码 4
                     }
                 }
-                0
+            } else {
+                None
+            };
+
+            // 连续读取事件
+            loop {
+                match recv_json(&mut r).await {
+                    Ok(v) => {
+                        if v.get("type").and_then(|x| x.as_str()) == Some("log.eof") {
+                            break;
+                        }
+                        let evt = if v.get("type").is_some() {
+                            v.clone()
+                        } else {
+                            v.get("data").cloned().unwrap_or(v.clone())
+                        };
+
+                        if let (Some(ts), Some(level), Some(msg)) = (
+                            evt.get("ts").and_then(|x| x.as_str()),
+                            evt.get("level").and_then(|x| x.as_str()),
+                            evt.get("msg").and_then(|x| x.as_str()),
+                        ) {
+                            let line = format!("{ts} {level:<5} {msg}\n");
+                            if let Some(f) = file.as_mut() {
+                                if let Err(e) =
+                                    tokio::io::AsyncWriteExt::write_all(f, line.as_bytes()).await
+                                {
+                                    eprintln!("write file failed: {e}");
+                                    break;
+                                }
+                            } else {
+                                print!("{line}");
+                            }
+                        } else {
+                            let s = evt.to_string();
+                            if let Some(f) = file.as_mut() {
+                                if tokio::io::AsyncWriteExt::write_all(f, s.as_bytes())
+                                    .await
+                                    .is_err()
+                                    || tokio::io::AsyncWriteExt::write_all(f, b"\n").await.is_err()
+                                {
+                                    eprintln!("write file failed");
+                                    break;
+                                }
+                            } else {
+                                println!("{s}");
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("log stream end: {e}");
+                        break;
+                    }
+                }
             }
+            0
         }
     };
 

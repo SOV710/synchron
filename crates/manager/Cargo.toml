@@ -11,6 +11,6 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { workspace = true }
-synchron-common = { path = "../common/" }
+synchron-utils = { path = "../utils/" }
 tokio = { workspace = true }
 

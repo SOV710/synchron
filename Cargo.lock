@@ -541,18 +541,9 @@ dependencies = [
  "clap",
  "serde",
  "serde_json",
- "synchron-common",
  "synchron-ffi",
  "thiserror",
  "time",
- "tokio",
-]
-
-[[package]]
-name = "synchron-common"
-version = "0.1.0"
-dependencies = [
- "clap",
  "tokio",
 ]
 
@@ -572,7 +563,7 @@ name = "synchron-manager"
 version = "0.1.0"
 dependencies = [
  "clap",
- "synchron-common",
+ "synchron-utils",
  "tokio",
 ]
 
@@ -581,12 +572,20 @@ name = "synchron-reconciler"
 version = "0.1.0"
 
 [[package]]
+name = "synchron-utils"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "tokio",
+]
+
+[[package]]
 name = "synchron-watcher"
 version = "0.1.0"
 dependencies = [
  "ignore",
- "synchron-common",
  "synchron-ffi",
+ "synchron-utils",
  "thiserror",
  "tokio",
 ]

@@ -1,5 +1,9 @@
 #![allow(dead_code)]
+pub mod uds;
+pub use uds::*;
+
 use clap::ValueEnum;
+use std::env;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use tokio::sync::{broadcast, mpsc};
@@ -43,4 +47,10 @@ pub struct Handle {
     pub rx: mpsc::Receiver<Event>,
     stop: broadcast::Sender<()>,
     join: JoinHandle<()>,
+}
+
+// ======== Env utils ========
+// set environment variables utils function
+fn getenv_or(key: &str, default: &str) -> String {
+    env::var(key).unwrap_or_else(|_| default.to_string())
 }

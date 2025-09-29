@@ -11,7 +11,7 @@ path = "src/lib.rs"
 
 [dependencies]
 ignore = "0.4"
-synchron-common = { path = "../common/" }
+synchron-utils = { path = "../utils/" }
 synchron-ffi = { path = "../ffi/" }
 thiserror = { workspace = true }
 tokio = { workspace = true }
