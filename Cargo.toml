@@ -4,7 +4,6 @@ members = ["crates/*"]
 
 [workspace.package]
 version = "0.1.0"
-authors = ["SOV710 <chris916911179@outlook.com"]
 edition = "2021"
 rust-version = "1.90.0"
 description = "A real-time folder synchronization tool, inspired by Syncthing."
