@@ -1,6 +1,5 @@
 mod init_detect;
 mod init_service;
-mod uds;
 
 use crate::init_detect::{detect, InitSystem};
 use crate::init_service::*;
