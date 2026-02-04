@@ -13,7 +13,6 @@ readme = "README.md"
 homepage = "https://github.com/SOV710/synchron"
 repository = "https://github.com/SOV710/synchron"
 license = "MIT"
-license-file = "LICENSE"
 keywords = ["files", "filesync", "realtime", "sync"]
 categories = ["accessibility", "asynchronous", "command-line-utilities"]
 
